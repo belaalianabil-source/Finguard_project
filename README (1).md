@@ -30,30 +30,33 @@ All tables live in the Unity Catalog catalog `finguard`.
 
 ```
 .
+├── finguard_customers_silver/
+│   └── transformations/
+│       └── customers_silver.py                  # Silver: clean customer profiles
+├── finguard_streaming/                          # Main streaming pipeline
+│   ├── Bronze/
+│   │   ├── transactions_bronze.py               # Kafka → bronze
+│   │   └── fraud_watchlist_bronze.py            # Auto Loader JSON → bronze
+│   ├── silver/
+│   │   ├── transactions_silver.py               # Parse Kafka JSON, quality checks
+│   │   └── fraud_watchlist_silver.py            # Clean watchlist records
+│   ├── gold/
+│   │   ├── high_value_transactions_alert.py     # Amount > customer limit
+│   │   ├── fraud_card_alert.py                  # Card matches watchlist
+│   │   ├── transactions_count_by_minute.py      # 1-minute tumbling window
+│   │   └── transaciton_count_by_minute_sliding_window.py  # 5-minute window, 1-minute slide
+│   └── alert/
+│       ├── hight-value-trnasactions-email-alert.py        # Email sink: high-value alerts
+│       └── fraud_card_email_alert.py                      # Email sink: fraud alerts
+├── fraud_watchlist_file_generator/
+│   ├── fraud_watchlist.csv                      # Sample fraud watchlist
+│   └── fraud_watchlist_data_generato.py         # Simulate a watchlist feed from the CSV
 ├── notebooks/                                   # Setup and testing notebooks
 │   ├── 1_kfka_streaming_test.py                 # Test the Kafka connection and streaming read
 │   ├── 2_secret_scope.py                        # Create the secret scope and store credentials
 │   ├── 3_sending_email.py                       # Test Gmail SMTP sending
-│   ├── 4_test_transformation_watchList.py       # Test watchlist ingestion with Auto Loader
-│   └── fraud_watchlist_data_generato.py         # Simulate a watchlist feed from the CSV
-├── data/
-│   └── fraud_watchlist.csv                      # Sample fraud watchlist
-└── pipeline/
-    ├── bronze/
-    │   ├── transactions_bronze.py               # Kafka → bronze
-    │   └── fraud_watchlist_bronze.py            # Auto Loader JSON → bronze
-    ├── silver/
-    │   ├── transactions_silver.py               # Parse Kafka JSON, quality checks
-    │   ├── customers_silver.py                  # Clean customer profiles
-    │   └── fraud_watchlist_silver.py            # Clean watchlist records
-    └── gold/
-        ├── high_value_transactions_alert.py     # Amount > customer limit
-        ├── fraud_card_alert.py                  # Card matches watchlist
-        ├── transactions_count_by_minute.py      # 1-minute tumbling window
-        ├── transaciton_count_by_minute_sliding_window.py  # 5-minute window, 1-minute slide
-        ├── hight-value-trnasactions-email-alert.py        # Email sink: high-value alerts
-        └── fraud_card_email_alert.py                      # Email sink: fraud alerts
-```
+│   └── 4_test_transformation_watchList.py       # Test watchlist ingestion with Auto Loader
+└── README.md
 
 ## Tables
 
